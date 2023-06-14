@@ -1,0 +1,33 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+
+
+
+
+# all the images
+*.png
+*.jpg
+*.jpeg
+*.svg
+
+
+# vscode
+.vscode/
+
+
+*.npy
+
+mmkb/image-graph_urls/*
+
+data_tmp
+data2
+data
+image_vgg
+mmkb
+text_matching
+例子1
+
+.DS_Store
