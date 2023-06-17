@@ -1,89 +1,0 @@
-2023-06-01 20:13:22.221367: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
-To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
-2023-06-01 20:13:22.778429: W tensorflow/compiler/xla/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
-2023-06-01 20:13:22.778501: I tensorflow/compiler/xla/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
-2023-06-01 20:13:25.512225: W tensorflow/compiler/xla/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer.so.7'; dlerror: libnvinfer.so.7: cannot open shared object file: No such file or directory
-2023-06-01 20:13:25.512386: W tensorflow/compiler/xla/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer_plugin.so.7'; dlerror: libnvinfer_plugin.so.7: cannot open shared object file: No such file or directory
-2023-06-01 20:13:25.512407: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
-2023-06-01 20:13:33.070317: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
-To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
-2023-06-01 20:13:33.100988: W tensorflow/compiler/xla/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudnn.so.8'; dlerror: libcudnn.so.8: cannot open shared object file: No such file or directory
-98851 42
-fuck (44172, 44172)
-Sinkhorn time= 1313.0786490440369
-		total is  44172
-		hits@1 is 0.20257176491895318
-		hits@5 is 0.32470795979353434
-		hits@10 is 0.38291225210540614
-		MR is 1091.18017578125
-		MRR is 0.2644021809101105
-[[    0  3068]
- [    0  3296]
- [    0  3310]
- ...
- [98850 51423]
- [98850 52019]
- [98850 54276]]
-[[    0     9]
- [    1     9]
- [    2     9]
- ...
- [98848    81]
- [98849    81]
- [98850    81]]
-[1. 1. 1. ... 1. 1. 1.]
-Tensor("lambda_2/Mean_2:0", shape=(), dtype=float32)
-Model: "model"
-__________________________________________________________________________________________________
- Layer (type)                   Output Shape         Param #     Connected to                     
-==================================================================================================
- input_3 (InputLayer)           [(None, None)]       0           []                               
-                                                                                                  
- input_5 (InputLayer)           [(None, None, 2)]    0           []                               
-                                                                                                  
- token_embedding (TokenEmbeddin  (98851, 128)        12652928    ['input_3[0][0]']                
- g)                                                                                               
-                                                                                                  
- token_embedding_1 (TokenEmbedd  (84, 128)           10752       ['input_3[0][0]']                
- ing)                                                                                             
-                                                                                                  
- input_4 (InputLayer)           [(None, None, 2)]    0           []                               
-                                                                                                  
- lambda (Lambda)                (98851, 128)         0           ['input_5[0][0]',                
-                                                                  'token_embedding[0][0]']        
-                                                                                                  
- input_1 (InputLayer)           [(None, None, 2)]    0           []                               
-                                                                                                  
- input_2 (InputLayer)           [(None, None, 2)]    0           []                               
-                                                                                                  
- lambda_1 (Lambda)              (98851, 128)         0           ['input_4[0][0]',                
-                                                                  'token_embedding_1[0][0]']      
-                                                                                                  
- nr__graph_attention (NR_GraphA  (98851, 384)        172672      ['lambda[0][0]',                 
- ttention)                                                        'token_embedding_1[0][0]',      
-                                                                  'input_1[0][0]',                
-                                                                  'input_2[0][0]',                
-                                                                  'input_3[0][0]']                
-                                                                                                  
- nr__graph_attention_1 (NR_Grap  (98851, 384)        172672      ['lambda_1[0][0]',               
- hAttention)                                                      'token_embedding_1[0][0]',      
-                                                                  'input_1[0][0]',                
-                                                                  'input_2[0][0]',                
-                                                                  'input_3[0][0]']                
-                                                                                                  
- concatenate (Concatenate)      (98851, 768)         0           ['nr__graph_attention[0][0]',    
-                                                                  'nr__graph_attention_1[0][0]']  
-                                                                                                  
- input_6 (InputLayer)           [(None, None, 2)]    0           []                               
-                                                                                                  
- dropout (Dropout)              (98851, 768)         0           ['concatenate[0][0]']            
-                                                                                                  
- lambda_2 (Lambda)              ()                   0           ['input_6[0][0]',                
-                                                                  'dropout[0][0]']                
-                                                                                                  
-==================================================================================================
-Total params: 13,009,024
-Trainable params: 13,009,024
-Non-trainable params: 0
-__________________________________________________________________________________________________
-  0%|          | 0/20 [00:00<?, ?it/s]  5%|▌         | 1/20 [01:15<24:01, 75.89s/it] 10%|█         | 2/20 [02:21<21:53, 72.95s/it] 15%|█▌        | 3/20 [03:27<20:01, 70.65s/it] 20%|██        | 4/20 [04:31<18:20, 68.77s/it] 25%|██▌       | 5/20 [3:55:45<17:32:33, 4210.22s/it] 30%|███       | 6/20 [3:56:55<11:32:35, 2968.26s/it] 35%|███▌      | 7/20 [3:58:04<7:34:38, 2098.38s/it]  40%|████      | 8/20 [3:59:20<4:58:20, 1491.70s/it] 45%|████▌     | 9/20 [4:00:28<3:15:12, 1064.75s/it] 50%|█████     | 10/20 [7:54:11<13:45:20, 4952.04s/it] 55%|█████▌    | 11/20 [7:55:12<8:42:42, 3484.74s/it]  60%|██████    | 12/20 [7:56:11<5:27:36, 2457.12s/it] 65%|██████▌   | 13/20 [7:57:11<3:22:45, 1737.94s/it] 70%|███████   | 14/20 [7:58:11<2:03:27, 1234.51s/it]
