@@ -1,3 +1,6 @@
+from config import *
+
+
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -49,36 +52,20 @@ rel_features    norm(rel_in || rel_out)
 
 '''
 
-attr_scores = np.load(pjoin('data', 'YAGO15K-FB15K', 'attr_scores_no_rule.pkl'), allow_pickle=True)
-# norm attr scores
-attr_scores = (attr_scores - np.min(attr_scores)) / (np.max(attr_scores) - np.min(attr_scores))
-
-# image_scores = np.load(pjoin('data', 'DB15K-FB15K', 'image_scores.pkl'), allow_pickle=True)
-# # norm image scores
-# image_scores = (image_scores - np.min(image_scores)) / (np.max(image_scores) - np.min(image_scores))
-
-use_image_cnt = 6
-with open(pjoin('data', 'image_embed', 'image_score{}_yago15k_max_for_dev.npy'.format(use_image_cnt)), 'rb') as f:
-    image_scores = pickle.load(f)
-
-print('attr_scores.shape:', attr_scores.shape)
-print('image_scores.shape:', image_scores.shape)
 
 
 
-dataset = "YAGO15K-FB15K"
-source = dataset.split('-')[0]
-max_image_cnt = 1
+dataset = args.dataset
+source_dataset, target_dataset = dataset.split('-')
 
-if source == 'DB15K':
-    source_image_embedding = np.load(pjoin('mmkb', 'DB15K', 'embedding', 'images_embeddings{}.npy'.format(max_image_cnt)), allow_pickle=True)
-elif source == 'YAGO15K':
-    source_image_embedding = np.load(pjoin('mmkb', 'YAGO15K', 'embedding', 'images_embeddings{}.npy'.format(max_image_cnt)), allow_pickle=True)
+# load side modalities from ./data/dataset/MSP_results folder
+side_modalities = {}
+for filename in os.listdir(pjoin('./data', dataset, 'MSP_results')):
+    # load the .npy file
+    side_modalities[filename.split('.')[0]] = np.load(pjoin('./data', dataset, 'MSP_results', filename))
 
-target_image_embedding = np.load(pjoin('mmkb', 'FB15K', 'embedding', 'images_embeddings{}.npy'.format(max_image_cnt)), allow_pickle=True)
-image_embedding = np.concatenate([source_image_embedding, target_image_embedding], axis=0)
-image_size, image_dim = image_embedding.shape
-print('image_size:', image_size, 'image_dim:', image_dim)
+print('there are {} side modalities'.format(len(side_modalities)))
+print('they are: {}'.format(side_modalities.keys()))
 
 
 
@@ -135,14 +122,8 @@ def get_trgat(node_hidden, rel_hidden, triple_size=triple_size, node_size=node_s
     val_input = Input(shape=(None,))
     rel_adj = Input(shape=(None, 2))
     ent_adj = Input(shape=(None, 2))
-    # [adj_matrix, r_index, r_val, rel_matrix, ent_matrix]
-    # Is that useful? val_input
-    # non_image_node_size = node_size - image_size
     ent_emb = TokenEmbedding(node_size, node_hidden, trainable=True)(val_input)
     rel_emb = TokenEmbedding(rel_size, node_hidden, trainable=True)(val_input)
-    # linear from image_dim to node_hidden, image_embedding is not trainable and linear is not trainable too
-    # image_emb = Dense(node_hidden, use_bias=False, trainable=False)(image_embedding)
-    # ent_emb = Concatenate(axis=0)([ent_emb, image_emb])
 
 
     def avg(tensor, size):
@@ -245,7 +226,7 @@ np.random.shuffle(rest_set_1)
 np.random.shuffle(rest_set_2)
 
 epoch = 20
-for turn in range(5):
+for turn in range(3):
     for i in trange(epoch):
         np.random.shuffle(train_pair)
         for pairs in [train_pair[i * batch_size:(i + 1) * batch_size] for i in
@@ -260,7 +241,10 @@ for turn in range(5):
         if i%5==4 :
             Lvec, Rvec = get_embedding(dev_pair[:, 0], dev_pair[:, 1])
             # get score matrix for dev_pair
-            scores = torch.Tensor(Lvec.dot(Rvec.T) + image_scores)
+            scores = torch.Tensor(Lvec.dot(Rvec.T))
+            # add side modalities scores
+            for _, side_score in side_modalities.items():
+                scores += torch.Tensor(side_score)
             scores = matrix_sinkhorn(1 - scores)
             sparse_eval.evaluate_sim_matrix(link = torch.stack([torch.arange(len(dev_pair)), 
                                                     torch.arange(len(dev_pair))], dim=0),
@@ -271,24 +255,19 @@ for turn in range(5):
             # evaluater.test(Lvec, Rvec)
         new_pair = []
     Lvec, Rvec = get_embedding(rest_set_1, rest_set_2)
-    attr_scores_now = np.zeros((len(rest_set_1), len(rest_set_2)), dtype=np.float32)
-    image_scores_now = np.zeros((len(rest_set_1), len(rest_set_2)), dtype=np.float32)
-    for i, e1 in enumerate(rest_set_1):
-        for j, e2 in enumerate(rest_set_2):
-            source_index = sourceId2Index[e1]
-            target_index = targetId2Index[e2]
-            attr_scores_now[i, j] = attr_scores[source_index, target_index]
-            image_scores_now[i, j] = image_scores[source_index, target_index]
+    side_scores_now = {}
+    for side_name, side_score in side_modalities.items():
+        side_scores_now[side_name] = np.zeros((len(rest_set_1), len(rest_set_2)), dtype=np.float32)
+        for i, e1 in enumerate(rest_set_1):
+            for j, e2 in enumerate(rest_set_2):
+                source_index = sourceId2Index[e1]
+                target_index = targetId2Index[e2]
+                side_scores_now[side_name][i, j] = side_score[source_index, target_index]
     
-    # image_scores_now = np.zeros((len(rest_set_1), len(rest_set_2)), dtype=np.float32)
-    # for i, e1 in enumerate(rest_set_1):
-    #     for j, e2 in enumerate(rest_set_2):
-    #         source_index = sourceId2Index[e1]
-    #         target_index = targetId2Index[e2]
-    #         image_scores_now[i, j] = image_scores[source_index, target_index]
-
-    # A, B = evaluater.CSLS_cal(Lvec, Rvec, False)
-    scores = Lvec.dot(Rvec.T) + image_scores_now
+    scores = Lvec.dot(Rvec.T)
+    for _, side_score in side_scores_now.items():
+        scores += side_score
+        
     A, B = scores.argmax(axis=0), scores.argmax(axis=1)
     for i, j in enumerate(A):
         if B[j] == i:
