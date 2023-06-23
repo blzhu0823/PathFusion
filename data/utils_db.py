@@ -1,8 +1,6 @@
 from os.path import join as pjoin
 import re
 import numpy as np
-import random
-import pickle
 
 ent2id = {}
 id2ent = {}
@@ -132,40 +130,12 @@ source_id2_attr_value = {}
 target_id2_attr_value = {}
 print('source attr value num:', len(source_attr_value_set))
 print('target attr value num:', len(target_attr_value_set))
-with open('./data/DB15K-FB15K/attrValue_ids_1', 'w') as f:
-    for i, attr_value in enumerate(sorted(list(source_attr_value_set))):
-        f.write(str(i) + '\t' + attr_value)
-        f.write('\n')
-        source_attr_value_2_id[attr_value] = i
-        source_id2_attr_value[i] = attr_value
-with open('./data/DB15K-FB15K/attrValue_ids_2', 'w') as f:
-    for i, attr_value in enumerate(sorted(list(target_attr_value_set))):
-        f.write(str(i) + '\t' + attr_value)
-        f.write('\n')
-        target_attr_value_2_id[attr_value] = i
-        target_id2_attr_value[i] = attr_value
 
 source2attr = np.zeros((len(source2id), len(source_attr_value_set)), dtype=np.float32)
 target2attr = np.zeros((len(target2id), len(target_attr_value_set)), dtype=np.float32)
-with open(pjoin('data', 'DB15K-FB15K', 'attrValue_triplets_1'), 'w') as f1, open(pjoin('data', 'DB15K-FB15K', 'attrValue_triplets_2'), 'w') as f2:
-    for i, attrs in enumerate(id2attrs):
-        if i < len(source2id):
-            for attr, value, schema in attrs:
-                f1.write(str(i) + '\t' + str(source_attr_value_2_id[attr + ' ' + date2float(value)]))
-                f1.write('\n')
-                source2attr[i][source_attr_value_2_id[attr + ' ' + date2float(value)]] = 1
-        else:
-            for attr, value in attrs:
-                f2.write(str(i) + '\t' + str(target_attr_value_2_id[attr + ' ' + date2float(value)]))
-                f2.write('\n')
-                target2attr[i - len(source2id)][target_attr_value_2_id[attr + ' ' + date2float(value)]] = 1
 
 
 
-# save source2attr and target2attr
-# with open(pjoin('data', 'DB15K-FB15K', 'source2attr.npy'), 'wb') as f1, open(pjoin('data', 'DB15K-FB15K', 'target2attr.npy'), 'wb') as f2:
-#     pickle.dump(source2attr, f1)
-#     pickle.dump(target2attr, f2)
 
 
 

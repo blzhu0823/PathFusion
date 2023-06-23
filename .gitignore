@@ -19,15 +19,3 @@ __pycache__/
 
 
 *.npy
-
-mmkb/image-graph_urls/*
-
-data_tmp
-data2
-data
-image_vgg
-mmkb
-text_matching
-例子1
-
-.DS_Store
