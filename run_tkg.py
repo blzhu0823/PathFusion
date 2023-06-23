@@ -1,3 +1,9 @@
+from config_tkg import *
+
+dataset = args.dataset
+train_ratio = args.train_ratio
+
+
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -43,7 +49,7 @@ rel_features    norm(rel_in || rel_out)
 '''
 
 
-train_pair, dev_pair, adj_matrix, r_index, r_val, adj_features, rel_features, time_feature, source2devindex, target2devindex = load_data_tkg("data/tkg/YAGO-WIKI50K/", train_ratio=0.2)
+train_pair, dev_pair, adj_matrix, r_index, r_val, adj_features, rel_features, time_feature, source2devindex, target2devindex = load_data_tkg("data/{}/".format(dataset), train_ratio=train_ratio)
 
 
 print('fuck', time_feature.shape)
