@@ -62,7 +62,8 @@ source_dataset, target_dataset = dataset.split('-')
 side_modalities = {}
 for filename in os.listdir(pjoin('./data', dataset, 'MSP_results')):
     # load the .npy file
-    side_modalities[filename.split('.')[0]] = np.load(pjoin('./data', dataset, 'MSP_results', filename))
+    if filename.endswith('.npy'):
+        side_modalities[filename.split('.')[0]] = np.load(pjoin('./data', dataset, 'MSP_results', filename))
 
 print('there are {} side modalities'.format(len(side_modalities)))
 print('they are: {}'.format(side_modalities.keys()))
