@@ -12,7 +12,6 @@ import keras
 import numpy as np
 from utils import *
 from tqdm import *
-from evaluate import evaluate
 from keras.layers import *
 import tensorflow.compat.v1 as tf
 import keras.backend as K
@@ -52,7 +51,6 @@ rel_features    norm(rel_in || rel_out)
 train_pair, dev_pair, adj_matrix, r_index, r_val, adj_features, rel_features, time_feature, source2devindex, target2devindex = load_data_tkg("data/{}/".format(dataset), train_ratio=train_ratio)
 
 
-print('fuck', time_feature.shape)
 scores = matrix_sinkhorn(torch.Tensor(1 - time_feature), device='cpu')
 sparse_eval.evaluate_sim_matrix(link = torch.stack([torch.arange(len(dev_pair)), 
                                         torch.arange(len(dev_pair))], dim=0),
@@ -82,7 +80,6 @@ depth = 2
 def get_embedding(index_a, index_b, vec=None):
     if vec is None:
         inputs = [adj_matrix, r_index, r_val, rel_matrix, ent_matrix]
-        # what the fuck
         inputs = [np.expand_dims(item, axis=0) for item in inputs]
         vec = get_emb.predict_on_batch(inputs)
     Lvec = np.array([vec[e] for e in index_a])
@@ -206,7 +203,6 @@ model,get_emb = get_trgat(dropout_rate=dropout_rate,
                           rel_hidden=rel_hidden,
                           lr=lr)
 
-evaluater = evaluate(dev_pair)
 model.summary()
 
 rest_set_1 = [e1 for e1, e2 in dev_pair]
@@ -223,7 +219,6 @@ for turn in range(5):
             if len(pairs) == 0:
                 continue
             inputs = [adj_matrix, r_index, r_val, rel_matrix, ent_matrix, pairs]
-            # what the fuck
             inputs = [np.expand_dims(item, axis=0) for item in inputs]
             output = model.train_on_batch(inputs, np.zeros((1, 1)))
             print(output)

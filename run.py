@@ -10,7 +10,6 @@ import keras
 import numpy as np
 from utils import *
 from tqdm import *
-from evaluate import evaluate
 from keras.layers import *
 import tensorflow.compat.v1 as tf
 import keras.backend as K
@@ -93,7 +92,6 @@ depth = 2
 def get_embedding(index_a, index_b, vec=None):
     if vec is None:
         inputs = [adj_matrix, r_index, r_val, rel_matrix, ent_matrix]
-        # what the fuck
         inputs = [np.expand_dims(item, axis=0) for item in inputs]
         vec = get_emb.predict_on_batch(inputs)
     Lvec = np.array([vec[e] for e in index_a])
@@ -186,10 +184,6 @@ def get_trgat(node_hidden, rel_hidden, triple_size=triple_size, node_size=node_s
             K.std(l_loss, axis=-1, keepdims=True))
 
         lamb, tau = 30, 10
-        # l_loss = K.log(K.sum(K.exp(lamb * l_loss + tau), axis=-1))
-        # r_loss = K.log(K.sum(K.exp(lamb * r_loss + tau), axis=-1))
-        # l_loss = K.logsumexp(lamb * l_loss + tau, axis=-1)
-        # r_loss = K.logsumexp(lamb * r_loss + tau, axis=-1)
         l_loss = tf.reduce_logsumexp(lamb * l_loss + tau, axis=-1)
         r_loss = tf.reduce_logsumexp(lamb * r_loss + tau, axis=-1)
         final_loss = K.mean(l_loss + r_loss)
@@ -216,7 +210,6 @@ model,get_emb = get_trgat(dropout_rate=dropout_rate,
                           rel_hidden=rel_hidden,
                           lr=lr)
 
-evaluater = evaluate(dev_pair)
 model.summary()
 
 rest_set_1 = [e1 for e1, e2 in dev_pair]
@@ -235,7 +228,6 @@ for turn in range(3):
             if len(pairs) == 0:
                 continue
             inputs = [adj_matrix, r_index, r_val, rel_matrix, ent_matrix, pairs]
-            # what the fuck
             inputs = [np.expand_dims(item, axis=0) for item in inputs]
             output = model.train_on_batch(inputs, np.zeros((1, 1)))
             print(output)
@@ -251,9 +243,6 @@ for turn in range(3):
                                                     torch.arange(len(dev_pair))], dim=0),
                                                     sim_x2y=scores,
                                                     no_csls=True)
-            # save score
-            # pickle.dump(scores, open(pjoin('data', 'DB15K-FB15K', 'gnn_scores.pkl'), 'wb'))
-            # evaluater.test(Lvec, Rvec)
         new_pair = []
     Lvec, Rvec = get_embedding(rest_set_1, rest_set_2)
     side_scores_now = {}
