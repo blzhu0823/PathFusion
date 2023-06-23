@@ -113,11 +113,17 @@ The visual embedding and adjacency matrix under the Vis folder are too large to 
 ## Quick Start
 ### To test PathFusion on (DB15K-FB15K, YAGO15K-FB15K)
 1. Generate Attr score matrix for test seeds (saved in /data/DATASET_NAME/MSP_results/Attr.npy)
-`python MSP_Attr.py --dataset DATASET_NAME`
+```
+python MSP_Attr.py --dataset DATASET_NAME
+```
 2. Generate Vis score matrix for test seeds (saved in /data/DATASET_NAME/MSP_results/Vis.npy), which may take several hours.
-`python MSP_Vis.py --dataset DATASET_NAME --max_image_num MAX_IMAGE_NUM`
+```
+python MSP_Vis.py --dataset DATASET_NAME --max_image_num MAX_IMAGE_NUM
+```
 3. Train the model and evaluate it on test seeds, which will uses MSP result /data/DATASET_NAME/MSP_results/*.npy to do IRF process.
-`python run.py --dataset DATASET_NAME`
+```
+python run.py --dataset DATASET_NAME
+```
 
 where:
 ```
@@ -130,7 +136,9 @@ step 2 is unavailable now due to the lack for Vis related files. we'll upload th
 you can do step 1 and step 3 now. (Our PathFusion model can get SOTA performance even without Vis modality.)
 
 ### To test PathFusion on (ICEWS05-15, YAGO-WIKI50K)
-`python run_tkg.py --dataset DATASET_NAME --train_ratio TRAIN_RATIO`
+```
+python run_tkg.py --dataset DATASET_NAME --train_ratio TRAIN_RATIO
+```
 
 where:
 ```
