@@ -25,7 +25,7 @@ from sinkhorn import matrix_sinkhorn
 
 
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "7"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 tf.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 

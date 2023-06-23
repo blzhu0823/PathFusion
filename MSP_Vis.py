@@ -9,6 +9,7 @@ import torch
 
 parser = argparse.ArgumentParser(description='MSP process (Vis) for PathFusion')
 parser.add_argument('--dataset', type=str, default='DB15K-FB15K', help='dataset name', choices=['DB15K-FB15K', 'YAGO15K-FB15K'])
+parser.add_argument('--max_image_num', type=int, default=6, help='max image num for each entity', choices=[1, 2, 3, 4, 5, 6])
 
 args = parser.parse_args()
 
@@ -16,7 +17,7 @@ args = parser.parse_args()
 source_dataset, target_dataset = args.dataset.split('-')
 source_dataset = source_dataset.lower()
 target_dataset = target_dataset.lower()
-use_img_num = 6
+use_img_num = args.max_image_num
 
 
 if source_dataset == 'db15k':

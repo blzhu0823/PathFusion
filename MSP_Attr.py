@@ -85,7 +85,6 @@ np.save(f'./data/{args.dataset}/MSP_results/Attr.npy', scores)
 scores = torch.Tensor(scores)
 scores = matrix_sinkhorn(1 - scores)
 
-
 sparse_eval.evaluate_sim_matrix(link = torch.stack([torch.arange(len(dev_pair)), 
                                         torch.arange(len(dev_pair))], dim=0),
                                         sim_x2y=scores,
