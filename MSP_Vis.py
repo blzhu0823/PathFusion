@@ -4,6 +4,7 @@ from tqdm import tqdm
 from sinkhorn import matrix_sinkhorn
 import sparse_eval
 import torch
+import pickle
 
 
 
@@ -27,11 +28,11 @@ else:
 
 
 # load source image embedding
-with open('./data/image_embed/{}.npy'.format(source_dataset), 'rb') as f:
+with open('./data/image/{}.npy'.format(source_dataset), 'rb') as f:
     source_embedding = pickle.load(f)
 
 # load source entity id to image id mapping
-with open('./data/image_embed/{}'.format(source_dataset), 'rb') as f:
+with open('./data/image/{}'.format(source_dataset), 'rb') as f:
     source_id2img = pickle.load(f)
 
 
@@ -40,11 +41,11 @@ print('source id2img length: {}'.format(len(source_id2img)))
 
 
 # load target image embedding
-with open('./data/image_embed/{}.npy'.format(target_dataset), 'rb') as f:
+with open('./data/image/{}.npy'.format(target_dataset), 'rb') as f:
     target_embedding = pickle.load(f)
 
 # load target entity id to image id mapping
-with open('./data/image_embed/{}'.format(target_dataset), 'rb') as f:
+with open('./data/image/{}'.format(target_dataset), 'rb') as f:
     target_id2img = pickle.load(f)
 
 

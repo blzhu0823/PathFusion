@@ -139,3 +139,21 @@ print('target attr value num:', len(target_attr_value_set))
 source2attr = np.zeros((len(source2id), len(source_attr_value_set)), dtype=np.float32)
 target2attr = np.zeros((len(target2id), len(target_attr_value_set)), dtype=np.float32)
 
+
+
+source_attr_value_list = sorted(list(source_attr_value_set))
+target_attr_value_list = sorted(list(target_attr_value_set))
+
+
+
+for i, attrs in enumerate(id2attrs):
+    if i < len(source2id):
+        for attr, value, schema in attrs:
+            value = date2float(value)
+            pos = source_attr_value_list.index(attr + ' ' + value)
+            source2attr[i][pos] = 1
+    else:
+        for attr, value in attrs:
+            value = date2float(value)
+            pos = target_attr_value_list.index(attr + ' ' + value)
+            target2attr[i-len(source2id)][pos] = 1

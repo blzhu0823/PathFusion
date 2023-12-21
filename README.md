@@ -104,8 +104,10 @@ utils_yb.py: data loading script for YAGO15K-FB15K
 ```
 
 
-The visual embedding and adjacency matrix under the Vis folder are too large to upload through git, and because of the anonymity principle of submission, we cannot provide their corresponding links, so we can only test PathFusion without Vis modality now, and we will upload the corresponding Vis related files after review process to reproduce the effect of the complete PathFusion model. (Our PathFusion model can get SOTA performance even without Vis modality.)
+~~The visual embedding and adjacency matrix under the Vis folder are too large to upload through git, and because of the anonymity principle of submission, we cannot provide their corresponding links, so we can only test PathFusion without Vis modality now, and we will upload the corresponding Vis related files after review process to reproduce the effect of the complete PathFusion model.~~ (Our PathFusion model can get SOTA performance even without Vis modality.)
 
+
+<span style="color:red">Now we share the image embedding of DB15K, FB15K, YAGO15K, and their adjacency matrix from entity Id to image Id. You can download them from [here](https://drive.google.com/file/d/1Yn4XciN_y2m17_NunVmHwWh79UUjiNoI/view?usp=sharing) and put them in the data folder.</span>
 
 
 
